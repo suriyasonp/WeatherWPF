@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using WeatherWpfMvvmApp.Model;
+using WeatherWpfMvvmApp.ViewModel.Commands;
+using WeatherWpfMvvmApp.ViewModel.Helpers;
 
 namespace WeatherWpfMvvmApp.ViewModel
 {
@@ -41,6 +43,8 @@ namespace WeatherWpfMvvmApp.ViewModel
             }
         }
 
+        public SearchCommand SearchCommand { get; set; }
+
         public WeatherViewModel()
         {
             // Show binding value is only in design mode.
@@ -62,8 +66,15 @@ namespace WeatherWpfMvvmApp.ViewModel
                     }
                 };
             }
+
+            SearchCommand = new(this);
         }
 
+        public async void MakeQuery()
+        {
+            var cities = await AccuWeatherHelper.GetCitiesAsync(Query);
+
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

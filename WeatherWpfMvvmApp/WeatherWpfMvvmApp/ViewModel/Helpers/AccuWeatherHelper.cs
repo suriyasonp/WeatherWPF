@@ -18,7 +18,7 @@ namespace WeatherWpfMvvmApp.ViewModel.Helpers
 
         public static async Task<List<City>> GetCitiesAsync(string query)
         {
-            List<City> cities = new();
+            List<City>? cities = new();
 
             string url = BASE_URL + string.Format(AUTOCOMPLETE_ENDPOINT, API_KEY, query);
 
@@ -28,7 +28,6 @@ namespace WeatherWpfMvvmApp.ViewModel.Helpers
                 string json = await response.Content.ReadAsStringAsync();
 
                 cities = JsonConvert.DeserializeObject<List<City>>(json);
-
             }
 
             return cities;

@@ -58,11 +58,14 @@
             <TextBlock Text="Search for a city:" 
                        Style="{StaticResource searchTextBlockStyle}"
                        />
-            <TextBox Text="{Binding Query, Mode=TwoWay}"
+            <TextBox Text="{Binding Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Style="{StaticResource searchTextBox}"/>
             <Button Margin="0 10"
                     Content="Search"
-                    Style="{StaticResource searchButton}"/>
+                    Style="{StaticResource searchButton}"
+                    Command="{Binding SearchCommand}"
+                    CommandParameter="{Binding Query}"
+                    />
 
             <ListView>
                 <ListView.ItemTemplate>
