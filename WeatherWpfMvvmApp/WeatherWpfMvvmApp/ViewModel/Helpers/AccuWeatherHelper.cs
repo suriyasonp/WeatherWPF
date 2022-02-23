@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using WeatherWpfMvvmApp.Model;
 
 namespace WeatherWpfMvvmApp.ViewModel.Helpers
@@ -21,19 +22,25 @@ namespace WeatherWpfMvvmApp.ViewModel.Helpers
             List<City>? cities = new();
 
             string url = BASE_URL + string.Format(AUTOCOMPLETE_ENDPOINT, API_KEY, query);
-
-            using (HttpClient client = new())
+            try
             {
-                var response = await client.GetAsync(url);
-                string json = await response.Content.ReadAsStringAsync();
-
-                cities = JsonConvert.DeserializeObject<List<City>>(json);
+                using (HttpClient client = new())
+                {
+                    var response = await client.GetAsync(url);
+                    string json = await response.Content.ReadAsStringAsync();
+                    cities = JsonConvert.DeserializeObject<List<City>>(json);
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Cannot fetch!");
+            }
+
 
             return cities;
         }
 
-        public async Task<CurrentConditions> GetCurrentConditions(string cityKey)
+        public static async Task<CurrentConditions> GetCurrentConditions(string cityKey)
         {
             CurrentConditions currentConditions = new();
 

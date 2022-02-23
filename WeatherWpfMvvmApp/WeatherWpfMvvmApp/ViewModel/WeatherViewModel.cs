@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using WeatherWpfMvvmApp.Model;
 using WeatherWpfMvvmApp.ViewModel.Commands;
 using WeatherWpfMvvmApp.ViewModel.Helpers;
@@ -40,8 +41,11 @@ namespace WeatherWpfMvvmApp.ViewModel
             {
                 selectedCity = value;
                 OnPropertyChanged(nameof(SelectedCity));
+                GetCurrentCondition();
             }
         }
+
+        public ObservableCollection<City> Cities { get; set; }
 
         public SearchCommand SearchCommand { get; set; }
 
@@ -61,19 +65,38 @@ namespace WeatherWpfMvvmApp.ViewModel
                     {
                         Metric = new Units()
                         {
-                            Value = 30
+                            Value = "30"
                         }
                     }
                 };
             }
 
             SearchCommand = new(this);
+            Cities = new ObservableCollection<City>();
+        }
+
+        private async void GetCurrentCondition()
+        {
+            Query = string.Empty;
+
+            if (Cities.Count > 0)
+                Cities.Clear();
+
+            if(SelectedCity != null && !string.IsNullOrWhiteSpace(SelectedCity.Key))
+                CurrentConditions = await AccuWeatherHelper.GetCurrentConditions(SelectedCity.Key);
         }
 
         public async void MakeQuery()
         {
             var cities = await AccuWeatherHelper.GetCitiesAsync(Query);
 
+            if (Cities.Count > 0)
+                Cities.Clear();
+
+            foreach (var city in cities)
+            {
+                Cities.Add(city);
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
