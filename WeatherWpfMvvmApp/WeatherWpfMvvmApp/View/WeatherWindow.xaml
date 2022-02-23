@@ -4,9 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WeatherWpfMvvmApp.View"
+        xmlns:vm="clr-namespace:WeatherWpfMvvmApp.ViewModel"
         mc:Ignorable="d"
         Title="Accu Weather" Height="600" Width="400">
     <Window.Resources>
+        <vm:WeatherViewModel x:Key="vm"/>
+
         <Style x:Key="cityTextBlockStyle" 
                TargetType="TextBlock">
             <Setter Property="Foreground" Value="#f4f4f8"/>
@@ -40,8 +43,13 @@
             <Setter Property="Padding" Value="5 5 5 5"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
+        <Style x:Key="searchTextBox" TargetType="TextBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="Gray"/>
+        </Style>
     </Window.Resources>
-    <Grid>
+
+    <Grid DataContext="{StaticResource vm}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -50,6 +58,8 @@
             <TextBlock Text="Search for a city:" 
                        Style="{StaticResource searchTextBlockStyle}"
                        />
+            <TextBox Text="{Binding Query, Mode=TwoWay}"
+                     Style="{StaticResource searchTextBox}"/>
             <Button Margin="0 10"
                     Content="Search"
                     Style="{StaticResource searchButton}"/>
@@ -65,18 +75,20 @@
             </ListView>
         </StackPanel>
         <Grid Grid.Row="1"
-              Background="#4392f1">
+              Background="#4392f1"
+              DataContext="{Binding CurrentConditions}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Margin="0 10">
-                <TextBlock Text="Bangkok"
+                <TextBlock DataContext="{StaticResource vm}" 
+                           Text="{Binding SelectedCity.LocalizedName}"
                            Style="{StaticResource cityTextBlockStyle}"/>
-                <TextBlock Text="overcast"
+                <TextBlock Text="{Binding WeatherText}"
                            Style="{StaticResource 2ndLineTextBlockStyle}"/>
             </StackPanel>
-            <TextBlock Text="30 C"
+            <TextBlock Text="{Binding Temperature.Metric.Value, StringFormat={}{0}°C}"
                        Grid.Column="1"
                        Style="{StaticResource temperatureTextBlockStyle}"/>
         </Grid>
